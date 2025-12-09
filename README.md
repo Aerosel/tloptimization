@@ -58,6 +58,9 @@ The script is configured with the following defaults:
 
 To modify, edit the constants at the top of `detect_vehicles_pedestrians.py`.
 
+Additional configuration:
+- MAX_MISSING_TIME = 1.0  # Seconds to keep object tracks if temporarily undetected
+
 ## Requirements
 
 - Python 3.6+

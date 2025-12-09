@@ -19,6 +19,9 @@ STREAM_URL = 'https://flussonic2.powernet.com.ru:444/user83475/tracks-v1/mono.m3
 PEDESTRIAN_ROI = (820, 7, 500, 400)  # Green ROI for pedestrians
 VEHICLE_ROI = (289, 219, 1600, 600)  # Full frame for vehicles, adjust if needed
 
+# Tracking parameters
+MAX_MISSING_TIME = 1.0  # Seconds to keep track if object temporarily disappears
+
 # Mouse position
 mouse_x, mouse_y = -1, -1
 
@@ -172,7 +175,7 @@ def main():
                     pedestrian_tracks.append(new_track)
 
             now = current_time
-            pedestrian_tracks = [t for t in pedestrian_tracks if now - t['last_seen'] < 0.5]  # keep for 0.5s if missing
+            pedestrian_tracks = [t for t in pedestrian_tracks if now - t['last_seen'] < MAX_MISSING_TIME]  # keep tracks if object disappears temporarily
 
             # Update vehicle tracks
             matched = [False] * len(vehicle_tracks)
@@ -193,7 +196,7 @@ def main():
                     new_track = {'bbox': det, 'start_time': current_time, 'last_seen': current_time}
                     vehicle_tracks.append(new_track)
 
-            vehicle_tracks = [t for t in vehicle_tracks if now - t['last_seen'] < 0.5]
+            vehicle_tracks = [t for t in vehicle_tracks if now - t['last_seen'] < MAX_MISSING_TIME]
 
             # Update counters and totals
             num_persons = len(current_pedestrian_dets)
