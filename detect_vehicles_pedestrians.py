@@ -163,7 +163,7 @@ def main():
                 for i, track in enumerate(pedestrian_tracks):
                     if not matched[i]:
                         iou = calculate_iou(track['bbox'], det)
-                        if iou > best_iou and iou > 0.3:
+                        if iou > best_iou and iou > 0.5:  # Increased threshold for better matching
                             best_iou = iou
                             best_idx = i
                 if best_idx != -1:
@@ -185,7 +185,7 @@ def main():
                 for i, track in enumerate(vehicle_tracks):
                     if not matched[i]:
                         iou = calculate_iou(track['bbox'], det)
-                        if iou > best_iou and iou > 0.4:
+                        if iou > best_iou and iou > 0.5:  # Increased threshold to reduce double-counting
                             best_iou = iou
                             best_idx = i
                 if best_idx != -1:
