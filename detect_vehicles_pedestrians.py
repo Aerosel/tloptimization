@@ -1,6 +1,7 @@
 import cv2
 import time
 from ultralytics import YOLO
+import config
 
 # Define the classes to detect
 TARGET_CLASSES = [0, 2, 3, 5, 7]  # person(0), car(2), truck(7), bus(5), motorcycle(3)
@@ -26,7 +27,7 @@ MAX_MISSING_TIME = 1.0  # Seconds to keep track if object temporarily disappears
 mouse_x, mouse_y = -1, -1
 
 # Traffic light state
-traffic_light_state = 'red'
+traffic_light_state = config.START_PHASE
 
 def mouse_callback(event, x, y, flags, param):
     global mouse_x, mouse_y
@@ -59,6 +60,7 @@ def main():
     # Open video capture
     cap = cv2.VideoCapture(STREAM_URL)
 
+    green_phase_start = 0  # Time when green phase started
     prev_time = time.time()
     frame_count = 0
     total_person_frames = 0  # Frames with at least one pedestrian in ROI
@@ -176,6 +178,17 @@ def main():
 
             now = current_time
             pedestrian_tracks = [t for t in pedestrian_tracks if now - t['last_seen'] < MAX_MISSING_TIME]  # keep tracks if object disappears temporarily
+
+            # Traffic light control logic
+            if pedestrian_tracks:
+                dwell_times = [current_time - t['start_time'] for t in pedestrian_tracks]
+                if traffic_light_state == 'red' and any(dw > config.MAX_PEDESTRIAN_WAIT for dw in dwell_times):
+                    traffic_light_state = 'green'
+                    green_phase_start = current_time
+
+            if traffic_light_state == 'green' and green_phase_start > 0 and current_time - green_phase_start >= config.GREEN_PHASE_DURATION:
+                traffic_light_state = 'red'
+                green_phase_start = 0
 
             # Update vehicle tracks
             matched = [False] * len(vehicle_tracks)
