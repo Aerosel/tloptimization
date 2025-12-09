@@ -42,8 +42,8 @@ This will:
 - Connect to the specified HLS stream URL
 - Perform real-time detection of persons, cars, motorcycles, buses, and trucks within specified ROI (pedestrians only in ROI, vehicles frame-wide)
 - Display a video window with bounding boxes around detected objects (red boxes for out-of-ROI pedestrians)
-- Visualize pedestrian ROI (green rectangle), traffic light (bottom-right), mouse coordinates (top-right)
-- Display FPS and detection counters on video window
+- Visualize pedestrian ROI (green rectangle), vehicle ROI (blue rectangle), traffic light (bottom-right), mouse coordinates (top-right), dwell times
+- Display FPS, detection counters, and individual dwell times (in seconds) for active objects in ROIs
 - Automatically reconnect if the stream is interrupted
 - Manual traffic light control: Press 'r' for red light, 'g' for green light, 'q' to quit
 
@@ -53,7 +53,8 @@ The script is configured with the following defaults:
 - Stream URL: `https://flussonic2.powernet.com.ru:444/user83475/tracks-v1/mono.m3u8?token=dont-panic-and-carry-a-towel`
 - Detection classes: person (0), car (2), motorcycle (3), bus (5), truck (7)
 - Model: yolov8n.pt (auto-downloaded on first run)
-- Pedestrian Detection ROI: (50, 50, 500, 400) - Only detections within this region are counted as pedestrians; vehicles are detected across the entire frame.
+- Pedestrian Detection ROI: (820, 7, 500, 400) - Only detections within this region are counted as pedestrians.
+- Vehicle Detection ROI: (0, 0, 1280, 720) - Only detections within this region are counted as vehicles (default full frame).
 
 To modify, edit the constants at the top of `detect_vehicles_pedestrians.py`.
 
